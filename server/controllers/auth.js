@@ -94,13 +94,18 @@ const loginUser = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
     // Respond with success message
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 900000,
+      sameSite: "lax",
+    });
+
     res.status(200).json({
       status: "success",
       message: "User logged in successfully",
       data: {
         username: user.name,
         email: user.email,
-        token,
       },
     });
   } catch (error) {
