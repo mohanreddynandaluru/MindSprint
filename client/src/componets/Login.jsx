@@ -1,24 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { PiHandsPraying } from "react-icons/pi";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../slice/userSlice";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../util/constants";
 
 const Login = () => {
   const [email, setEmail] = useState("test1@gmail.com");
   const [password, setPassword] = useState("123");
+  const [error, seterror] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
   const handleLogin = (e) => {
     e.preventDefault();
     console.log(email, password);
     try {
       axios
         .post(
-          "http://localhost:4000/api/auth/login",
+          BASE_URL + "/api/auth/login",
           {
             email,
             password,
@@ -32,14 +35,20 @@ const Login = () => {
           dispatch(setUser(response.data.data));
           return navigate("/");
         })
-        .catch((error) => {
-          console.error("Login failed:", error);
+        .catch((err) => {
+          seterror(err?.response?.data?.message);
+          console.error(error);
         });
-    } catch (error) {
-      console.error("An error occurred during login:", error);
+    } catch (err) {
+      seterror(err?.response?.data?.message);
+      console.error("An error occurred during login:", err);
     }
   };
-
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  });
   return (
     <>
       <div className="h-[90vh] text-center flex items-center justify-center">
@@ -68,6 +77,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <p className="text-red-500">{error}</p>
           <button
             className="btn text-white border-[#e5e5e5] h-[45px] w-[300px] text-center rounded-2xl hover:bg-[#e5e5e5] hover:text-black"
             onClick={handleLogin}

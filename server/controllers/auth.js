@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
 
     // Create a new user
     const newuser = new User({
-      name: username,
+      username: username,
       email: email,
       password: hashedpassword,
     });
@@ -82,7 +82,7 @@ const loginUser = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         status: "error",
-        message: "User does not exist with this email",
+        message: "Invalid credentials",
       });
     }
     // Check if password is correct
@@ -90,7 +90,7 @@ const loginUser = async (req, res) => {
     if (!ispasswordValid) {
       return res.status(400).json({
         status: "error",
-        message: "Invalid password",
+        message: "Invalid credentials",
       });
     }
     // create jwt token
@@ -107,7 +107,7 @@ const loginUser = async (req, res) => {
       status: "success",
       message: "User logged in successfully",
       data: {
-        username: user.name,
+        username: user.username,
         email: user.email,
       },
     });
@@ -124,8 +124,7 @@ const loginUser = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
-
+    const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({
         status: "error",
@@ -143,7 +142,7 @@ const getProfile = async (req, res) => {
     res.status(200).json({
       status: "success",
       data: {
-        username: user.name,
+        username: user.username,
         email: user.email,
       },
     });
@@ -156,8 +155,57 @@ const getProfile = async (req, res) => {
   }
 };
 
+// logout
+
+const logoutUser = async (req, res) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+  });
+  res.status(200).json({ status: "success", message: "logout successfull" });
+};
+
+// update user
+
+const updateProfile = async (req, res) => {
+  try {
+    let { username } = req.body;
+
+    let user = req.user;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user.id,
+      { username },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("username email");
+    if (!updatedUser) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not Found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "User Updated successfull",
+      data: {
+        username: updatedUser.username,
+        email: updatedUser.email,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server Error",
+    });
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
   getProfile,
+  logoutUser,
+  updateProfile,
 };

@@ -1,10 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PiBrainLight } from "react-icons/pi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../util/constants";
+import { removeUser } from "../slice/userSlice";
 
 const Navbar = () => {
   const username = useSelector((state) => state.user?.username);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handlelogout = async () => {
+    try {
+      axios.get(BASE_URL + "/api/auth/logout", { withCredentials: true });
+      await dispatch(removeUser());
+      return navigate("/login");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -29,9 +43,17 @@ const Navbar = () => {
             </Link>
           </div>
         ) : (
-          <Link className="btn btn-ghost text-xl p-1" to={"/profile"}>
-            {username}
-          </Link>
+          <div>
+            <Link className="btn btn-ghost text-xl p-1" to={"/profile"}>
+              {username}
+            </Link>
+            <button
+              className="btn text-white border-[#e5e5e5] h-[37px] w-[100px] text-center rounded-2xl hover:bg-[#e5e5e5] hover:text-black"
+              onClick={handlelogout}
+            >
+              logout
+            </button>
+          </div>
         )}
       </div>
     </>

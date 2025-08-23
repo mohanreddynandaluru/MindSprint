@@ -5,6 +5,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../slice/userSlice";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../util/constants";
 
 const SignUp = () => {
   const [username, setUsername] = useState("testuser7");
@@ -17,7 +18,7 @@ const SignUp = () => {
     try {
       axios
         .post(
-          "http://localhost:4000/api/auth/register",
+          BASE_URL + "/api/auth/register",
           {
             username,
             email,
@@ -30,6 +31,7 @@ const SignUp = () => {
         .then((response) => {
           console.log("SignUp successful:", response.data);
           dispatch(setUser(response.data.data));
+
           return navigate("/");
         })
         .catch((error) => {
