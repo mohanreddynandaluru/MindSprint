@@ -30,8 +30,8 @@ const Body = () => {
           location.pathname !== "/signup" &&
           location.pathname !== "/login"
         ) {
-          setToast(true);
           setToastMessage("Login is must and should");
+          setToast(true);
           setTimeout(() => {
             setToast(false);
           }, 3000);

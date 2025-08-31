@@ -84,6 +84,13 @@ const Login = () => {
           >
             Login with Email
           </button>
+          <hr className="w-[300px] text-white" />
+          <button
+            className="btn hover:text-white hover:border-[#e5e5e5] h-[45px] w-[300px] text-center rounded-2xl bg-[#e5e5e5] text-black hover:bg-black"
+            onClick={handleLogin}
+          >
+            Go with Google
+          </button>
 
           <p className="text-sm">
             {" "}

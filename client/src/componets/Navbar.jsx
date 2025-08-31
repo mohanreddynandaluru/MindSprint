@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="navbar bg-base-200 shadow-sm flex justify-between items-center px-4">
+      <div className="navbar backdrop-blur-md bg-base-900/40 shadow-sm flex justify-between items-center px-4 top-0 sticky z-10 ">
         <div className="flex items-center">
           <Link className="btn btn-ghost text-xl p-1" to={"/"}>
             <PiBrainLight className="text-3xl" />
@@ -44,7 +44,7 @@ const Navbar = () => {
           </div>
         ) : (
           <div>
-            <Link className="btn btn-ghost text-xl p-1" to={"/profile"}>
+            <Link className="btn btn-ghost text-lg p-2" to={"/profile"}>
               {username}
             </Link>
             <button
